@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Books - Library Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Library Management</div>
+        <div class="navbar-menu">
+            <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('user_search') }}">Search Books</a>
+            <a href="{{ url_for('user_profile') }}">My Profile</a>
+            <a href="{{ url_for('user_logout') }}">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1>Search Available Books</h1>
+        
+        <form method="POST" class="search-form">
+            <input type="text" name="search" placeholder="Search by title or author..." value="{{ search }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        
+        <div class="books-list">
+            {% for book in books %}
+            <div class="book-card">
+                <h3>{{ book.title }}</h3>
+                <p><strong>Author:</strong> {{ book.author }}</p>
+                <p><strong>Available Copies:</strong> {{ book.available_copies }}</p>
+                {% if book.available_copies > 0 %}
+                <form method="POST" action="{{ url_for('user_borrow', book_id=book.id) }}">
+                    <button type="submit" class="btn btn-success">Borrow</button>
+                </form>
+                {% else %}
+                <button class="btn btn-disabled" disabled>Not Available</button>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

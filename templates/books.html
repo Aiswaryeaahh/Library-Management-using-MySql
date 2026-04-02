@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Books Management - LibriSys{% endblock %}
+{% block header %}Books Management{% endblock %}
+
+{% block content %}
+<div class="table-container glass-panel">
+    <div class="table-header">
+        <div class="search-bar">
+            <input type="text" id="search-book-input" placeholder="Search by title or author...">
+            <button class="btn btn-primary" onclick="searchBooks()">Search</button>
+        </div>
+        <button class="btn btn-secondary" onclick="openModal('addBookModal')">+ Add Book</button>
+    </div>
+    
+    <div style="overflow-x:auto;">
+        <table id="books-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Total Copies</th>
+                    <th>Available</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Populated by JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Book Modal -->
+<div id="addBookModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add New Book</h2>
+            <button class="close-modal" onclick="closeModal('addBookModal')">&times;</button>
+        </div>
+        <form id="addBookForm" onsubmit="addBook(event)">
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Title</label>
+                    <input type="text" id="add-book-title" required>
+                </div>
+                <div class="input-group">
+                    <label>Author</label>
+                    <input type="text" id="add-book-author" required>
+                </div>
+                <div class="input-group">
+                    <label>Total Copies</label>
+                    <input type="number" id="add-book-copies" min="1" value="1" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal('addBookModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Book</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Book Modal -->
+<div id="editBookModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Book</h2>
+            <button class="close-modal" onclick="closeModal('editBookModal')">&times;</button>
+        </div>
+        <form id="editBookForm" onsubmit="editBook(event)">
+            <div class="modal-body">
+                <input type="hidden" id="edit-book-id">
+                <div class="input-group">
+                    <label>Title</label>
+                    <input type="text" id="edit-book-title" required>
+                </div>
+                <div class="input-group">
+                    <label>Author</label>
+                    <input type="text" id="edit-book-author" required>
+                </div>
+                <div class="input-group">
+                    <label>Total Copies</label>
+                    <input type="number" id="edit-book-copies" min="1" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal('editBookModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Book</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', loadBooks);
+</script>
+{% endblock %}

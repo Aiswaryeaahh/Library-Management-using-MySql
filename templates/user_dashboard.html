@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Library Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Library Management</div>
+        <div class="navbar-menu">
+            <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('user_search') }}">Search Books</a>
+            <a href="{{ url_for('user_profile') }}">My Profile</a>
+            <a href="{{ url_for('user_logout') }}">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1>Welcome, {{ session.user_name }}!</h1>
+        <p>Membership ID: {{ session.membership_id }}</p>
+        
+        <div class="dashboard-cards">
+            <div class="card">
+                <h3>Search & Borrow Books</h3>
+                <p>Find available books and borrow them.</p>
+                <a href="{{ url_for('user_search') }}" class="btn btn-primary">Search Books</a>
+            </div>
+            <div class="card">
+                <h3>My Profile</h3>
+                <p>View borrowed books, returns, and fines.</p>
+                <a href="{{ url_for('user_profile') }}" class="btn btn-secondary">View Profile</a>
+            </div>
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-success">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

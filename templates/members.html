@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Members Management - LibriSys{% endblock %}
+{% block header %}Members Management{% endblock %}
+
+{% block content %}
+<div class="table-container glass-panel">
+    <div class="table-header">
+        <h2>Library Members</h2>
+        <button class="btn btn-secondary" onclick="openModal('addMemberModal')">+ Register Member</button>
+    </div>
+    
+    <div style="overflow-x:auto;">
+        <table id="members-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Registered Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Populated by JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Member Modal -->
+<div id="addMemberModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Register New Member</h2>
+            <button class="close-modal" onclick="closeModal('addMemberModal')">&times;</button>
+        </div>
+        <form id="addMemberForm" onsubmit="addMember(event)">
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="add-member-name" required>
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="add-member-email" required>
+                </div>
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="text" id="add-member-phone">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal('addMemberModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', loadMembers);
+</script>
+{% endblock %}

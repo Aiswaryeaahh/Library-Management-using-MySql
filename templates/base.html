@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Library Management{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        {% if session.get('logged_in') %}
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>Libri<span>Sys</span></h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('dashboard') }}" class="{% if request.path == '/' or request.path == '/dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{{ url_for('books_page') }}" class="{% if request.path == '/books' %}active{% endif %}">Books</a></li>
+                <li><a href="{{ url_for('members_page') }}" class="{% if request.path == '/members' %}active{% endif %}">Members</a></li>
+                <li><a href="{{ url_for('issues_page') }}" class="{% if request.path == '/issues' %}active{% endif %}">Issues & Returns</a></li>
+            </ul>
+            <div class="logout">
+                <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+            </div>
+        </nav>
+        {% endif %}
+        
+        <main class="main-content {% if not session.get('logged_in') %}full-width{% endif %}">
+            {% if session.get('logged_in') %}
+            <header class="top-header">
+                <h1>{% block header %}{% endblock %}</h1>
+                <div class="user-profile">
+                    <span class="avatar">A</span>
+                    <span class="username">Admin</span>
+                </div>
+            </header>
+            {% endif %}
+            
+            <div class="content-wrapper">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+    
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

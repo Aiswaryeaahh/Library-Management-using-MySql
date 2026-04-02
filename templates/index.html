@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - LibriSys{% endblock %}
+{% block header %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<div class="stats-grid" id="dashboard-stats">
+    <!-- Stats will be loaded here via JS -->
+    <div class="stat-card glass-panel">
+        <h3>Total Books</h3>
+        <div class="value" id="stat-total-books">--</div>
+    </div>
+    <div class="stat-card glass-panel">
+        <h3>Available Books</h3>
+        <div class="value" id="stat-available-books">--</div>
+    </div>
+    <div class="stat-card glass-panel">
+        <h3>Total Members</h3>
+        <div class="value" id="stat-total-members">--</div>
+    </div>
+    <div class="stat-card glass-panel">
+        <h3>Active Loans</h3>
+        <div class="value" id="stat-active-loans">--</div>
+    </div>
+</div>
+
+<div class="table-container">
+    <div class="table-header">
+        <h2>Recent Issues</h2>
+        <a href="{{ url_for('issues_page') }}" class="btn btn-primary">View All</a>
+    </div>
+    <div style="overflow-x:auto;">
+        <table id="recent-issues-table">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Member</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Populated by JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadDashboardStats();
+        loadDashboardRecentIssues();
+    });
+</script>
+{% endblock %}

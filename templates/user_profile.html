@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Library Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Library Management</div>
+        <div class="navbar-menu">
+            <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('user_search') }}">Search Books</a>
+            <a href="{{ url_for('user_profile') }}">My Profile</a>
+            <a href="{{ url_for('user_logout') }}">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1>My Profile</h1>
+        <p><strong>Name:</strong> {{ session.user_name }}</p>
+        <p><strong>Membership ID:</strong> {{ session.membership_id }}</p>
+        
+        <h2>Currently Borrowed Books</h2>
+        {% if borrowed %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in borrowed %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.issue_date }}</td>
+                    <td>{{ book.due_date }}</td>
+                    <td>
+                        {% if book.days_overdue > 0 %}
+                        <span class="overdue">Overdue by {{ book.days_overdue }} days</span>
+                        {% else %}
+                        Issued
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('user_return', issue_id=book.id) }}">
+                            <button type="submit" class="btn btn-warning">Return</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No books currently borrowed.</p>
+        {% endif %}
+        
+        <h2>Total Fine: ${{ total_fine }}</h2>
+        
+        <h2>Return History</h2>
+        {% if returned %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Return Date</th>
+                    <th>Fine</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in returned %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.return_date }}</td>
+                    <td>${{ book.fine }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No return history.</p>
+        {% endif %}
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-success">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>
