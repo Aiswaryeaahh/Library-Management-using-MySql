@@ -259,3 +259,68 @@ def handle_exception(e):
     return str(e), 500
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
+from flask import jsonify
+
+@app.route('/api/books')
+def api_books():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM books")
+    books = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(books)
+
+@app.route('/api/members')
+def api_members():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM members")
+    members = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(members)
+
+@app.route('/api/issues')
+def api_issues():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT i.*, b.title AS book_title, m.name AS member_name
+        FROM issues i
+        JOIN books b ON i.book_id = b.id
+        JOIN members m ON i.member_id = m.id
+        ORDER BY i.issue_date DESC
+    """)
+    issues = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(issues)
+
+@app.route('/api/stats')
+def api_stats():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT COUNT(*) as total_books FROM books")
+    total_books = cursor.fetchone()['total_books']
+
+    cursor.execute("SELECT SUM(available_copies) as available_books FROM books")
+    available_books = cursor.fetchone()['available_books'] or 0
+
+    cursor.execute("SELECT COUNT(*) as total_members FROM members")
+    total_members = cursor.fetchone()['total_members']
+
+    cursor.execute("SELECT COUNT(*) as active_loans FROM issues WHERE status='issued'")
+    active_loans = cursor.fetchone()['active_loans']
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({
+        "total_books": total_books,
+        "available_books": available_books,
+        "total_members": total_members,
+        "active_loans": active_loans
+    })
