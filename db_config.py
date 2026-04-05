@@ -7,8 +7,9 @@ load_dotenv()
 
 def get_db_connection():
     database_url = os.getenv("DATABASE_URL")
+
+    # If DATABASE_URL is provided (preferred for Vercel)
     if database_url:
-        # Parse DATABASE_URL (e.g., mysql://user:pass@host:port/db)
         parsed = urlparse(database_url)
         host = parsed.hostname
         user = parsed.username
@@ -16,35 +17,33 @@ def get_db_connection():
         database = parsed.path.lstrip('/')
         port = parsed.port or 3306
 
-        if not (host and user and password and database):
-            raise ValueError("DATABASE_URL is invalid. Set DATABASE_URL in Vercel environment variables.")
-
         return mysql.connector.connect(
             host=host,
             user=user,
             password=password,
             database=database,
-            port=port,
+            port=int(port),
             auth_plugin='mysql_native_password'
         )
 
+    # Otherwise use individual environment variables
     host = os.getenv("DB_HOST")
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASS")
     database = os.getenv("DB_NAME")
+    port = os.getenv("DB_PORT", 3306)
 
     if not (host and user and password and database):
         raise ValueError(
-            "Missing database environment variables. Set DATABASE_URL or DB_HOST, DB_USER, DB_PASS, DB_NAME in Vercel."
+            "Missing database environment variables. "
+            "Set DATABASE_URL or DB_HOST, DB_USER, DB_PASS, DB_NAME in Vercel."
         )
 
-    port = os.getenv("DB_PORT", 3306)
-
-return mysql.connector.connect(
-    host=host,
-    user=user,
-    password=password,
-    database=database,
-    port=int(port),
-    auth_plugin='mysql_native_password'
-)
+    return mysql.connector.connect(
+        host=host,
+        user=user,
+        password=password,
+        database=database,
+        port=int(port),
+        auth_plugin='mysql_native_password'
+    )
