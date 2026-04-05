@@ -160,6 +160,49 @@ def user_search():
 
     return render_template('user_search.html')
 
+@app.route('/user/profile')
+@user_login_required
+def user_profile():
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # borrowed books
+    cursor.execute("""
+        SELECT i.*, b.title, b.author,
+               DATEDIFF(CURDATE(), i.due_date) as days_overdue
+        FROM issues i
+        JOIN books b ON i.book_id = b.id
+        WHERE i.member_id=%s AND i.status='issued'
+    """, (user_id,))
+    borrowed = cursor.fetchall()
+
+    total_fine = 0
+    for book in borrowed:
+        if book['days_overdue'] > 0:
+            total_fine += book['days_overdue'] * 10
+
+    # returned books
+    cursor.execute("""
+        SELECT i.*, b.title, b.author,
+               CASE WHEN i.return_date > i.due_date
+               THEN DATEDIFF(i.return_date, i.due_date) * 10
+               ELSE 0 END as fine
+        FROM issues i
+        JOIN books b ON i.book_id = b.id
+        WHERE i.member_id=%s AND i.status='returned'
+    """, (user_id,))
+    returned = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        "user_profile.html",
+        borrowed=borrowed,
+        returned=returned,
+        total_fine=total_fine
+    )
 
 # ==================== ADMIN PAGES ====================
 
