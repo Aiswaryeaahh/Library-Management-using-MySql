@@ -9,6 +9,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "fallback_secret_key")
 
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -16,6 +17,7 @@ def login_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
+
 
 def user_login_required(f):
     @wraps(f)
@@ -33,14 +35,14 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
+
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM admins WHERE username=%s", (username,))
         admin = cursor.fetchone()
         cursor.close()
         conn.close()
-        
+
         if admin and admin['password_hash'] == password:
             session['logged_in'] = True
             session['username'] = admin['username']
@@ -108,7 +110,7 @@ def user_login():
         cursor.close()
         conn.close()
 
-        if member and member['password'] == password:
+        if member and member.get('password') == password:
             session['user_logged_in'] = True
             session['user_id'] = member['id']
             session['user_name'] = member['name']
