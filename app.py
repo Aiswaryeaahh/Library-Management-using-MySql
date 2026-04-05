@@ -132,7 +132,7 @@ def user_logout():
 @user_login_required
 def user_dashboard():
     return render_template(
-        'user_dashboard.html',
+        "user_dashboard.html",
         user_name=session.get('user_name')
     )
 
