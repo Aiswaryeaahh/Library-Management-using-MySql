@@ -131,7 +131,10 @@ def user_logout():
 @app.route('/user/dashboard')
 @user_login_required
 def user_dashboard():
-    return render_template('user_dashboard.html')
+    return render_template(
+        'user_dashboard.html',
+        user_name=session.get('user_name')
+    )
 
 
 # ==================== USER SEARCH ====================
